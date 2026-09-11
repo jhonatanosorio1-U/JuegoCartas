@@ -24,7 +24,6 @@ public class Jugador {
         for(Carta carta: cartas){
             posicionX -= DISTANCIA;
             carta.mostrar(pnl, posicionX, MARGEN);
-            System.out.println(carta.getNombre() + " de " + carta.getPinta());
         }
         pnl.repaint();
     }
@@ -39,8 +38,11 @@ public class Jugador {
         for (Carta carta : cartas) {
             int posicion = carta.getNombre().ordinal();
             contadores[posicion]++;
-            if (!hayGrupos && contadores[posicion] >= 2)
+            if (!hayGrupos && contadores[posicion] >= 2){
                 hayGrupos = true;
+            }else{
+                //TODO contar puntaje
+            }
         }
 
         if (hayGrupos) {
