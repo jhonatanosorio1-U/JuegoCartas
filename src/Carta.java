@@ -48,4 +48,13 @@ public class Carta {
         return NombreCarta.values()[residuo - 1];
     }
 
+    public int getValor() {
+        NombreCarta nombre = getNombre();
+        if (nombre == NombreCarta.AS || nombre == NombreCarta.JACK 
+                || nombre == NombreCarta.QUEEN || nombre == NombreCarta.KING) {
+            return 10;
+        }
+        return nombre.ordinal() + 1;
+    }
+
 }

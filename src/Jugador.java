@@ -11,6 +11,8 @@ public class Jugador {
     private Random r = new Random();
     private Carta[] cartas = new Carta[TOTAL_CARTAS]; //la mano del jugador
     private static int[] contadorCartas = new int[53];
+    private boolean[] nombreEnGrupo;
+    private boolean[][] pintaNombreEnEscalera;
 
     public void repartir() {
         for (int i = 0; i < TOTAL_CARTAS; i++) {
@@ -53,6 +55,13 @@ public class Jugador {
                 hayGrupos = true;
         }
 
+         nombreEnGrupo = new boolean[contadores.length];
+        for (int i = 0; i < contadores.length; i++) {
+            if (contadores[i] >= 2) {
+                nombreEnGrupo[i] = true;
+            }
+        }
+
         if (hayGrupos) {
             respuesta = "Se encontraron los siguientes grupos:\n";
             for (int i=0;i<contadores.length;i++) {
@@ -62,6 +71,7 @@ public class Jugador {
                     //respuesta += Grupo.values()[contador] + " de "+ NombreCarta.values()[] + "\n";
                     respuesta += Grupo.values()[contadores[i]] + " de "+ NombreCarta.values()[i] + "\n";
                 }   
+         
             }
         }
     
@@ -74,6 +84,7 @@ public class Jugador {
         boolean hayEscalera = false;
         String detallesEscalera = "";
         Pinta[] pintas = Pinta.values();
+        pintaNombreEnEscalera = new boolean[pintas.length][NombreCarta.values().length];
 
     // Recorrer cada pinta individualmente
         for (int p = 0; p < pintas.length; p++) {
@@ -113,6 +124,15 @@ public class Jugador {
                     contadorConsecutivas++;
                 } 
                 else if (valores[i + 1] != valores[i]) { // Si son números no consecutivos se corta la secuencia
+                        if (contadorConsecutivas >= 2) {
+                            hayEscalera = true;
+                            detallesEscalera += "Escalera de " + pintaActual + ": desde " + 
+                                            NombreCarta.values()[valores[inicio] - 1] + 
+                                            " hasta " + NombreCarta.values()[valores[i] - 1] + "\n";
+                            for (int v = valores[inicio]; v <= valores[i]; v++) {
+                                pintaNombreEnEscalera[pintaActual.ordinal()][v - 1] = true;
+                            }
+                    }
                     if (contadorConsecutivas >= 2) {
                             hayEscalera = true;
                             detallesEscalera += "Escalera de " + pintaActual + ": desde " + 
@@ -121,6 +141,17 @@ public class Jugador {
                     }
                     contadorConsecutivas = 1;
                     inicio = i + 1;
+
+                     if (contadorConsecutivas >= 2) {
+                hayEscalera = true;
+                detallesEscalera += "Escalera de " + pintaActual + ": desde " + 
+                                    NombreCarta.values()[valores[inicio] - 1] + 
+                                    " hasta " + NombreCarta.values()[valores[cantidadCartas - 1] - 1] + "\n";
+                for (int v = valores[inicio]; v <= valores[cantidadCartas - 1]; v++) {
+                    pintaNombreEnEscalera[pintaActual.ordinal()][v - 1] = true;
+                }
+            }
+                    
                 }
             }
 
@@ -139,7 +170,16 @@ public class Jugador {
 
         return respuesta;
     }
+      public int calcularPuntaje() {
+        int puntaje = 0;
+        for (Carta carta : cartas) {
+            boolean enGrupo = nombreEnGrupo != null && nombreEnGrupo[carta.getNombre().ordinal()];
+            boolean enEscalera = pintaNombreEnEscalera != null &&
+                    pintaNombreEnEscalera[carta.getPinta().ordinal()][carta.getNombre().ordinal()];
+            if (!enGrupo && !enEscalera) {
+                puntaje += carta.getValor();
+            }
+        }
+        return puntaje;
+    }
 }
-
-
-
